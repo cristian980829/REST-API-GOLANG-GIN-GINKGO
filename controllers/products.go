@@ -33,6 +33,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	// Get current date
 	t := time.Now()
 	date := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d",
 		t.Year(), t.Month(), t.Day(),
@@ -87,4 +88,38 @@ func FindOneProduct(c *gin.Context) {
 
 	// Response to request
 	c.JSON(http.StatusOK, gin.H{"data": product})
+}
+
+// PATCH /products/:id
+// Update a product
+func UpdateProduct(c *gin.Context) {
+
+	var product models.Product
+	// Get product if exist
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&product).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	// Validate input
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Get current date
+	t := time.Now()
+	date := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second())
+
+	// Update_date will be updated
+	product.Update_date = date
+
+	// Product updated
+	models.DB.Save(&product)
+
+	// Response to request
+	c.JSON(http.StatusOK, gin.H{"data": product})
+
 }
