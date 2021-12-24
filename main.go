@@ -1,12 +1,24 @@
 package main
 
 import (
-  "github.com/cristian980829/PRUEBA-TECNICA-KUASAR/models"
+	"github.com/gin-gonic/gin"
+	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/controllers"
+	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/models"
 )
 
 func main() {
 
+	router := gin.Default()
+
 	// Connected to database
 	models.ConnectDatabase()
 
+	// Routes
+	router.POST("/api/products", controllers.CreateProduct)
+
+	// Custom port
+	listenPort := "9098"
+	
+	// Run port
+	router.Run(":"+listenPort)
 }

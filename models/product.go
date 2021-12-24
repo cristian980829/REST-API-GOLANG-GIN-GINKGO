@@ -14,3 +14,4 @@ type Product struct {
 	Unit_description 	string 	`json:"unit_description"`
 	Stock				int32 	`json:"stock"`
 }
+
