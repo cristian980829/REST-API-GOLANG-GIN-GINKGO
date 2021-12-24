@@ -26,8 +26,9 @@ type CreateProductInput struct {
 // Create new product
 func CreateProduct(c *gin.Context) {
 
-	// Validate input
 	var input CreateProductInput
+
+	// Validate input
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -67,6 +68,7 @@ func CreateProduct(c *gin.Context) {
 func FindProducts(c *gin.Context) {
 
 	var products []models.Product
+
 	//Get all database products
 	models.DB.Find(&products)
 
@@ -122,4 +124,23 @@ func UpdateProduct(c *gin.Context) {
 	// Response to request
 	c.JSON(http.StatusOK, gin.H{"data": product})
 
+}
+
+// DELETE /products/:id
+// Delete a product
+func DeleteProduct(c *gin.Context) {
+
+	var product models.Product
+
+	// Get product if exist
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&product).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	// Product deleted
+	models.DB.Delete(&product)
+
+	// Response to request
+	c.JSON(http.StatusOK, gin.H{"data": true})
 }

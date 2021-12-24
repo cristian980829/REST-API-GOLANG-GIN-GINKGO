@@ -18,6 +18,7 @@ func main() {
 	router.GET("/api/products", controllers.FindProducts)
 	router.GET("/api/products/:id", controllers.FindOneProduct)
 	router.PUT("/api/products/:id", controllers.UpdateProduct)
+	router.DELETE("/api/products/:id", controllers.DeleteProduct)
 	
 	// Custom port
 	listenPort := "9098"
