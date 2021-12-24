@@ -60,3 +60,14 @@ func CreateProduct(c *gin.Context) {
 	// Response to request
 	c.JSON(http.StatusOK, gin.H{"data": product})
 }
+
+// GET /products
+// Find all products
+func FindProducts(c *gin.Context) {
+	var products []models.Product
+	//Get all database products
+	models.DB.Find(&products)
+
+	// Response to request
+	c.JSON(http.StatusOK, gin.H{"data": products})
+}

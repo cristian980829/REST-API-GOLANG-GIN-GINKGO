@@ -15,6 +15,7 @@ func main() {
 
 	// Routes
 	router.POST("/api/products", controllers.CreateProduct)
+	router.GET("/api/products", controllers.FindProducts)
 
 	// Custom port
 	listenPort := "9098"
