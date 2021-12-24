@@ -64,10 +64,27 @@ func CreateProduct(c *gin.Context) {
 // GET /products
 // Find all products
 func FindProducts(c *gin.Context) {
+
 	var products []models.Product
 	//Get all database products
 	models.DB.Find(&products)
 
 	// Response to request
 	c.JSON(http.StatusOK, gin.H{"data": products})
+}
+
+// GET /products/:id
+// Find a product
+func FindOneProduct(c *gin.Context) {
+
+	var product models.Product
+
+	// Get product if exist
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&product).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	// Response to request
+	c.JSON(http.StatusOK, gin.H{"data": product})
 }
