@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/models"
-
+	"io/ioutil"
+	"log"
+	"encoding/json"
 )
 
 type CreateProductInput struct {
@@ -143,4 +145,25 @@ func DeleteProduct(c *gin.Context) {
 
 	// Response to request
 	c.JSON(http.StatusOK, gin.H{"data": true})
+}
+
+// GET /volumes
+// Find volumes
+func GetVolumes(c *gin.Context) {
+
+	var data interface{}
+
+	// Read file
+	volumen_list, err := ioutil.ReadFile("./helper/volumen_list.json")
+
+	// Validate that there is no error when reading the file
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// JSON is converted
+	json.Unmarshal(volumen_list, &data)
+
+	// Response to request
+	c.JSON(http.StatusOK, data)
 }
