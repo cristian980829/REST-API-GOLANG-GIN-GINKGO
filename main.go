@@ -1,33 +1,41 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/controllers"
-	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/models"
+	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/api"
+	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/controller"
 	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/helper"
+	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/repository"
+	"github.com/cristian980829/PRUEBA-TECNICA-KUASAR/service"
+
+	"github.com/gin-gonic/gin"
+)
+
+var (
+	productRepository repository.ProductRepository = repository.NewProductRepository()
+	productService    service.ProductService       = service.New(productRepository)
+	productController controller.ProductController = controller.New(productService)
 )
 
 func main() {
 
 	router := gin.Default()
 
-	// Connected to database
-	models.ConnectDatabase()
+	productAPI := api.NewProductAPI(productController)
 
 	// Routes
-	router.POST("/api/products", controllers.CreateProduct)
-	router.GET("/api/products", controllers.FindProducts)
-	router.GET("/api/products/:id", controllers.FindOneProduct)
-	router.PUT("/api/products/:id", controllers.UpdateProduct)
-	router.DELETE("/api/products/:id", controllers.DeleteProduct)
+	router.POST("/api/products", productAPI.CreateProduct)
+	router.GET("/api/products", productAPI.GetProducts)
+	router.GET("/api/products/:id", productAPI.GetProduct)
+	router.PUT("/api/products/:id", productAPI.UpdateProduct)
+	router.DELETE("/api/products/:id", productAPI.DeleteProduct)
 
 	// Check if is an authorized user
 	authorized := router.Group("/", gin.BasicAuth(helper.ValidUser()))
-	authorized.GET("/api/volumes", controllers.GetVolumes)
-	
+	authorized.GET("/api/volumes", productAPI.GetVolumes)
+
 	// Custom port
 	listenPort := "9098"
-	
+
 	// Run port
-	router.Run(":"+listenPort)
+	router.Run(":" + listenPort)
 }
