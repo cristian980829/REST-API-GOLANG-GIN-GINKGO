@@ -25,7 +25,7 @@ type database struct {
 }
 
 func NewProductRepository() ProductRepository {
-	db, err := gorm.Open("sqlite3", "store_dos.db")
+	db, err := gorm.Open("sqlite3", "store.db")
 	if err != nil {
 		panic("Failed to connect database")
 	}
