@@ -80,6 +80,101 @@ var _ = Describe("ProductService", func() {
 		productService = service.New(productRepository)
 	})
 
+	Describe("Adding new products", func() {
+
+		Context("If a new product is added to the database", func() {
+
+			It("Should return nil", func() {
+				product := productService.Save(testProduct)
+
+				Ω(product).Should(BeNil())
+			})
+
+			AfterEach(func() {
+				product := productService.FindAll()[0]
+				productService.Delete(product)
+			})
+
+		})
+
+		Context("If a repeating product is added to the database", func() {
+
+			BeforeEach(func() {
+				productService.Save(testProduct)
+			})
+
+			It("Should not return nil", func() {
+				product := productService.Save(testProduct)
+
+				Ω(product).ShouldNot(BeNil())
+			})
+
+			AfterEach(func() {
+				product := productService.FindAll()[0]
+				productService.Delete(product)
+			})
+
+		})
+
+	})
+
+	Describe("Update products", func() {
+
+		Context("If a product is updated in the database", func() {
+
+			BeforeEach(func() {
+				productService.Save(testProduct)
+			})
+
+			It("Should update the element", func() {
+				// Element updated
+				productService.Update(testUpdatedProduct)
+
+				// Find element
+				updatedProduct := productService.FindOne(ID)
+
+				// Check if item was updated
+				Ω(updatedProduct.ID).Should(Equal(UID))
+				Ω(updatedProduct.Name).Should(Equal(UNAME))
+				Ω(updatedProduct.Description).Should(Equal(UDESCRIPTION))
+				Ω(updatedProduct.Status).Should(Equal(USTATUS))
+				Ω(updatedProduct.Creation_date).Should(Equal(UCREATION_DATE))
+				Ω(updatedProduct.Update_date).Should(Equal(UUPDATE_DATE))
+				Ω(updatedProduct.Account_id).Should(Equal(UACCOUNT_ID))
+				Ω(updatedProduct.Format_product).Should(Equal(UFORMAT_PRODUCT))
+				Ω(updatedProduct.Value_unit).Should(Equal(UVALUE_UNIT))
+				Ω(updatedProduct.Unit_name).Should(Equal(UUNIT_NAME))
+				Ω(updatedProduct.Unit_description).Should(Equal(UUNIT_DESCRIPTION))
+				Ω(updatedProduct.Stock).Should(Equal(USTOCK))
+
+			})
+
+			AfterEach(func() {
+				product := productService.FindAll()[0]
+				productService.Delete(product)
+			})
+		})
+
+	})
+
+	Describe("Deleting products", func() {
+
+		Context("If a repeating product is added to the database", func() {
+
+			BeforeEach(func() {
+				productService.Save(testProduct)
+			})
+
+			It("Should return nil", func() {
+				product := productService.Delete(testProduct)
+
+				Ω(product).Should(BeNil())
+			})
+
+		})
+
+	})
+
 	Describe("Fetching all existing products", func() {
 
 		Context("If there is a product in the database", func() {
@@ -109,18 +204,6 @@ var _ = Describe("ProductService", func() {
 				Ω(firstProduct.Unit_name).Should(Equal(UNIT_NAME))
 				Ω(firstProduct.Unit_description).Should(Equal(UNIT_DESCRIPTION))
 				Ω(firstProduct.Stock).Should(Equal(STOCK))
-			})
-
-			It("Should search element by id", func() {
-				product := productService.FindOne(ID)
-
-				Ω(product).Should(Equal(testProduct))
-			})
-
-			It("Should update the element", func() {
-				result := productService.Update(testUpdatedProduct)
-
-				Ω(result).Should(BeNil())
 			})
 
 			AfterEach(func() {

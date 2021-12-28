@@ -12,7 +12,7 @@ import (
 type ProductRepository interface {
 	Save(product entity.Product) error
 	Update(product entity.Product) error
-	Delete(product entity.Product)
+	Delete(product entity.Product) error
 	FindAll() []entity.Product
 	FindOne(string) entity.Product
 	AlreadyExist(string) bool
@@ -52,8 +52,9 @@ func (db *database) Update(product entity.Product) error {
 	return err
 }
 
-func (db *database) Delete(product entity.Product) {
-	db.connection.Delete(&product)
+func (db *database) Delete(product entity.Product) error {
+	err := db.connection.Delete(&product).Error
+	return err
 }
 
 func (db *database) FindAll() []entity.Product {

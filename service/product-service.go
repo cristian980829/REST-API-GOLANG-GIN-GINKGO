@@ -36,8 +36,8 @@ func (service *productService) Update(product entity.Product) error {
 }
 
 func (service *productService) Delete(product entity.Product) error {
-	service.repository.Delete(product)
-	return nil
+	error := service.repository.Delete(product)
+	return error
 }
 
 func (service *productService) FindOne(id string) entity.Product {
