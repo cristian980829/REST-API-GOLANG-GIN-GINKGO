@@ -38,6 +38,36 @@ var testProduct entity.Product = entity.Product{
 	Stock:            STOCK,
 }
 
+const (
+	UID                       = "1233456"
+	UNAME                     = "UPDATE PRODUCT NAME"
+	UDESCRIPTION              = "UPDATE PRODUCT DESCRIPTION"
+	USTATUS                   = "UPDATE PRODUCT STATUS"
+	UCREATION_DATE            = "2022-12-27T20:36:13"
+	UUPDATE_DATE              = "2022-12-27T20:36:13"
+	UACCOUNT_ID               = "4"
+	UFORMAT_PRODUCT           = "UPDATE FORMAT PRODUCT"
+	UVALUE_UNIT       float32 = 4000.00
+	UUNIT_NAME                = "UPDATE PRODUCT UNIT NAME"
+	UUNIT_DESCRIPTION         = "UPDATE PRODUCT UNIT DESCRIPTION"
+	USTOCK            int32   = 200
+)
+
+var testUpdatedProduct entity.Product = entity.Product{
+	ID:               UID,
+	Name:             UNAME,
+	Description:      UDESCRIPTION,
+	Status:           USTATUS,
+	Creation_date:    UCREATION_DATE,
+	Update_date:      UUPDATE_DATE,
+	Account_id:       UACCOUNT_ID,
+	Format_product:   UFORMAT_PRODUCT,
+	Value_unit:       UVALUE_UNIT,
+	Unit_name:        UUNIT_NAME,
+	Unit_description: UUNIT_DESCRIPTION,
+	Stock:            USTOCK,
+}
+
 var _ = Describe("ProductService", func() {
 
 	var (
@@ -58,13 +88,13 @@ var _ = Describe("ProductService", func() {
 				productService.Save(testProduct)
 			})
 
-			It("should return at least one element", func() {
+			It("Should return at least one element", func() {
 				productList := productService.FindAll()
 
 				Ω(productList).ShouldNot(BeEmpty())
 			})
 
-			It("should map the fields correctly", func() {
+			It("Should map the fields correctly", func() {
 				firstProduct := productService.FindAll()[0]
 
 				Ω(firstProduct.ID).Should(Equal(ID))
@@ -81,6 +111,18 @@ var _ = Describe("ProductService", func() {
 				Ω(firstProduct.Stock).Should(Equal(STOCK))
 			})
 
+			It("Should search element by id", func() {
+				product := productService.FindOne(ID)
+
+				Ω(product).Should(Equal(testProduct))
+			})
+
+			It("Should update the element", func() {
+				result := productService.Update(testUpdatedProduct)
+
+				Ω(result).Should(BeNil())
+			})
+
 			AfterEach(func() {
 				product := productService.FindAll()[0]
 				productService.Delete(product)
@@ -90,10 +132,26 @@ var _ = Describe("ProductService", func() {
 
 		Context("If there are no products in the database", func() {
 
-			It("should return an empty list", func() {
+			It("Should return an empty list", func() {
 				products := productService.FindAll()
 
 				Ω(products).Should(BeEmpty())
+			})
+
+			It("Should not find the element", func() {
+				product := productService.AlreadyExist(ID)
+
+				Ω(product).Should(Equal(false))
+			})
+
+		})
+
+		Context("If there are no data in the JSON file", func() {
+
+			It("Should return nil", func() {
+				volumes := productService.Volumes()
+
+				Ω(volumes).Should(BeNil())
 			})
 
 		})
